@@ -58,7 +58,7 @@ type BulkIndexerConfig struct {
 	FlushBytes    int           // The flush threshold in bytes. Defaults to 5MB.
 	FlushInterval time.Duration // The flush threshold as duration. Defaults to 30sec.
 
-	Client      *elasticsearch.Client   // The Elasticsearch client.
+	Transport   esapi.Transport         // The Elasticsearch transport.
 	Decoder     BulkResponseJSONDecoder // A custom JSON decoder.
 	DebugLogger BulkIndexerDebugLogger  // An optional logger for debugging.
 
@@ -256,8 +256,8 @@ type bulkIndexerStats struct {
 
 // NewBulkIndexer creates a new bulk indexer.
 func NewBulkIndexer(cfg BulkIndexerConfig) (BulkIndexer, error) {
-	if cfg.Client == nil {
-		cfg.Client, _ = elasticsearch.NewDefaultClient()
+	if cfg.Transport == nil {
+		cfg.Transport, _ = elasticsearch.NewDefaultClient()
 	}
 
 	if cfg.Decoder == nil {
@@ -538,7 +538,7 @@ func (w *worker) flushBuffer(ctx context.Context) error {
 	}
 	req.Header.Set(elasticsearch.HeaderClientMeta, "h=bp")
 
-	res, err := req.Do(ctx, w.bi.config.Client)
+	res, err := req.Do(ctx, w.bi.config.Transport)
 	if err != nil {
 		atomic.AddUint64(&w.bi.stats.numFailed, uint64(len(w.items)))
 		if w.bi.config.OnError != nil {
