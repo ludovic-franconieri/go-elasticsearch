@@ -20,6 +20,13 @@
 
 package types
 
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"io"
+)
+
 // IndexState type.
 //
 // https://github.com/elastic/elasticsearch-specification/blob/1ad7fe36297b3a8e187b2259dedaf68a47bc236e/specification/indices/_types/IndexState.ts#L26-L33
@@ -39,4 +46,52 @@ func NewIndexState() *IndexState {
 	}
 
 	return r
+}
+
+func (s *IndexState) UnmarshalJSON(data []byte) error {
+	dec := json.NewDecoder(bytes.NewReader(data))
+
+	for {
+		t, err := dec.Token()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return err
+		}
+
+		switch t {
+
+		case "aliases":
+			if s.Aliases == nil {
+				s.Aliases = make(map[string]Alias)
+			}
+
+			if err := dec.Decode(&s.Aliases); err != nil {
+				return err
+			}
+
+		case "data_stream":
+			if err := dec.Decode(&s.DataStream); err != nil {
+				return err
+			}
+
+		case "defaults":
+			if err := dec.Decode(&s.Defaults); err != nil {
+				return err
+			}
+
+		case "mappings":
+			if err := dec.Decode(&s.Mappings); err != nil {
+				return err
+			}
+
+		case "settings":
+			if err := dec.Decode(&s.Settings); err != nil {
+				return err
+			}
+
+		}
+	}
+	return nil
 }

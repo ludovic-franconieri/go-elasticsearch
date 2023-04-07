@@ -21,13 +21,12 @@
 package types
 
 import (
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/dynamicmapping"
-
 	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 
-	"encoding/json"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/dynamicmapping"
 )
 
 // TypeMapping type.
@@ -92,6 +91,10 @@ func (s *TypeMapping) UnmarshalJSON(data []byte) error {
 			}
 
 		case "dynamic_templates":
+			if s.DynamicTemplates == nil {
+				s.DynamicTemplates = make([]map[string]DynamicTemplate, 0)
+			}
+
 			if err := dec.Decode(&s.DynamicTemplates); err != nil {
 				return err
 			}
@@ -122,6 +125,10 @@ func (s *TypeMapping) UnmarshalJSON(data []byte) error {
 			}
 
 		case "properties":
+			if s.Properties == nil {
+				s.Properties = make(map[string]Property)
+			}
+
 			refs := make(map[string]json.RawMessage, 0)
 			dec.Decode(&refs)
 			for key, message := range refs {
