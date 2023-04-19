@@ -60,12 +60,16 @@ func (s *DateHistogramAggregate) UnmarshalJSON(data []byte) error {
 
 			case '{':
 				o := make(map[string]DateHistogramBucket, 0)
-				localDec.Decode(&o)
+				if err := localDec.Decode(&o); err != nil {
+					return err
+				}
 				s.Buckets = o
 
 			case '[':
 				o := []DateHistogramBucket{}
-				localDec.Decode(&o)
+				if err := localDec.Decode(&o); err != nil {
+					return err
+				}
 				s.Buckets = o
 			}
 

@@ -66,7 +66,9 @@ func (s *Response) UnmarshalJSON(data []byte) error {
 				kind := make(map[string]interface{})
 				buf := bytes.NewReader(message)
 				localDec := json.NewDecoder(buf)
-				localDec.Decode(&kind)
+				if err := localDec.Decode(&kind); err != nil {
+					return err
+				}
 				buf.Seek(0, io.SeekStart)
 
 				switch kind["managed"] {

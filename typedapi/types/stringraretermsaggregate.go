@@ -60,12 +60,16 @@ func (s *StringRareTermsAggregate) UnmarshalJSON(data []byte) error {
 
 			case '{':
 				o := make(map[string]StringRareTermsBucket, 0)
-				localDec.Decode(&o)
+				if err := localDec.Decode(&o); err != nil {
+					return err
+				}
 				s.Buckets = o
 
 			case '[':
 				o := []StringRareTermsBucket{}
-				localDec.Decode(&o)
+				if err := localDec.Decode(&o); err != nil {
+					return err
+				}
 				s.Buckets = o
 			}
 

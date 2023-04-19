@@ -45,7 +45,7 @@ func (f Float64) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON implements Unmarshaler interface.
 func (f *Float64) UnmarshalJSON(data []byte) error {
 	switch {
-	case bytes.Equal(data, []byte(`null`)):
+	case bytes.Equal(data, []byte(`null`)), bytes.Equal(data, []byte(`"NaN"`)), bytes.Equal(data, []byte(`"-Infinity"`)), bytes.Equal(data, []byte(`"Infinity"`)):
 		return nil
 	default:
 		n, err := strconv.ParseFloat(string(data), 64)

@@ -363,7 +363,9 @@ func (s *Aggregations) UnmarshalJSON(data []byte) error {
 			source := bytes.NewReader(rawMsg)
 			kind := make(map[string]string, 0)
 			localDec := json.NewDecoder(source)
-			localDec.Decode(&kind)
+			if err := localDec.Decode(&kind); err != nil {
+				return err
+			}
 			source.Seek(0, io.SeekStart)
 
 			switch kind["model"] {
