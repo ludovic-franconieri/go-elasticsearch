@@ -25,9 +25,9 @@ package types
 // https://github.com/elastic/elasticsearch-specification/blob/1ad7fe36297b3a8e187b2259dedaf68a47bc236e/specification/indices/_types/IndexSettings.ts#L245-L251
 type IndexSettingBlocks struct {
 	Metadata            *bool  `json:"metadata,omitempty"`
-	Read                *bool  `json:"read,omitempty"`
-	ReadOnly            *bool  `json:"read_only,omitempty"`
-	ReadOnlyAllowDelete *bool  `json:"read_only_allow_delete,omitempty"`
+	Read                string `json:"read,omitempty"`
+	ReadOnly            string `json:"read_only,omitempty"`
+	ReadOnlyAllowDelete string `json:"read_only_allow_delete,omitempty"`
 	Write               string `json:"write,omitempty"`
 }
 
